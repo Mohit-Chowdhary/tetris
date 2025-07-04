@@ -1,4 +1,4 @@
-terminal_tetris
+# terminal_tetris
 
 > A full-featured Tetris game rendered entirely in the Windows terminal. Built from scratch in C++ using raw console buffers, real-time input handling, piece rotation logic, and line-clearing mechanics.
 
@@ -6,12 +6,12 @@ terminal_tetris
 
 ## 🎮 Features
 
-- **Real-time controls** (← → ↓ Z to rotate)
-- **7 Tetromino types** with custom rotation logic
-- **Collision detection** and piece locking
-- **Line-clearing system** with scoring
-- **Score tracking** with exponential bonus on clears
-- **Runs in a Windows console** using `WriteConsoleOutputCharacterW`
+- **Real-time controls** (← → ↓ Z to rotate)  
+- **7 Tetromino types** with custom rotation logic  
+- **Collision detection** and piece locking  
+- **Line-clearing system** with scoring  
+- **Score tracking** with exponential bonus on clears  
+- **Runs in a Windows console** using `WriteConsoleOutputCharacterW`  
 
 ---
 
@@ -29,27 +29,18 @@ terminal_tetris
 
 You need **G++ 10 or later** and **Windows** (because of console API calls).
 
-### 🔧 Option 1: Using g++
+### 🔧 Using g++
 
 ```bash
 g++ -Wall -Wextra -std=c++17 -o tetris.exe tetris.cpp -static
-Run it:
 
-bash
-Copy
-Edit
+```
+▶️ Run it
+```bash
 ./tetris.exe
-📝 Note:
-Make sure you’re compiling using MSYS2 MinGW 64-bit, not regular MSYS2 or PowerShell. Otherwise, Windows-specific APIs may fail.
+```
 
-🎮 Controls
-Key	Action
-←	Move left
-→	Move right
-↓	Move down
-Z	Rotate piece
-
-💥 What I Learned
+What I Learned
 Threading and precise frame timing with sleep_for
 
 Framebuffer graphics using character arrays
@@ -63,14 +54,16 @@ Handling compiler hell — from broken G++ 6 to misconfigured G++ 15 — and sur
 Screenshot
 
 
-
-https://github.com/user-attachments/assets/1bed3461-bc52-47e2-96a4-49b7ba58ad4f
-
+https://github.com/user-attachments/assets/5b745bbc-705e-46b7-9fb9-45fb8348099b
 
 
 
-make sure your terminal is 120x30, else edit the code to fit your size
 
+⚠️ Make sure your terminal is 120x30, else edit the code to fit your terminal size.
+
+
+
+PS:
 okay first of all, most i’ve learnt from this proj is not even tetris or C++ — it’s g++ being something else entirely.
 
 what actually happened: so like, i started writing this game just fine — until i put
