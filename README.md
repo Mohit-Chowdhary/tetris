@@ -61,6 +61,14 @@ https://github.com/user-attachments/assets/5b745bbc-705e-46b7-9fb9-45fb8348099b
 
 ⚠️ Make sure your terminal is 120x30, else edit the code to fit your terminal size.
 
+check your terminal size in Windows by running `mode` in CMD.  
+then update these two lines in `main()` to match your terminal:
+
+```cpp
+int nScreenWidth = 120;
+int nScreenHeight = 30;
+```
+
 
 
 PS:
