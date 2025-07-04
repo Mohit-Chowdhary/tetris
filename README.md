@@ -1,5 +1,9 @@
 terminal_tetris
 
+make sure your terminal is 120x30, else edit the code to fit your size
+
+
+
 okay first of all, most i’ve learnt from this proj is not even tetris or C++ — it’s g++ being something else entirely.
 
 what actually happened: so like, i started writing this game just fine — until i put
