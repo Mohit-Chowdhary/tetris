@@ -14,9 +14,11 @@ wstring tetromino[7];
 int nFieldWidth = 12;
 int nFieldHeight = 18;
 unsigned char *pField = nullptr;
-int nScreenWidth = 80;
+int nScreenWidth = 120;
 int nScreenHeight = 30;
 
+// Add score variable
+int nScore = 0;
 
 
 int Rotate(int px, int py, int r){
@@ -115,11 +117,18 @@ int main(){
 
     bool bKey[4];
     bool bRotateHold = false;
+
+    int nSpeed = 20;
+    int nSpeedCounter = 0;
+    bool bForceDown = false;
+
+    vector<int> vLines;
     
     while(!bGameOver){
         // Game timing =====
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
-
+        nSpeedCounter++;
+        bForceDown = (nSpeedCounter == nSpeed);
 
         // Input =====
         for(int k = 0; k < 4; k++){                               // R, L, D, Z
@@ -141,6 +150,50 @@ int main(){
             bRotateHold = false;
         }
 
+        if(bForceDown){
+            if(DoesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX, nCurrentY+1)){
+                nCurrentY++; // Always move down if possible
+            }
+            else {
+                // It can't move down, lock the piece in the field
+                for(int px = 0; px < 4; px++)
+                    for(int py = 0; py < 4; py++)
+                        if(tetromino[nCurrentPiece][Rotate(px, py, nCurrentRotation)] != L'.')
+                            pField[(nCurrentY + py) * nFieldWidth + (nCurrentX + px)] = nCurrentPiece + 1;
+                
+                // Add score for placing a piece
+                nScore += 25;
+                
+                //chec if new line
+                for(int py = 0; py < 4; py++)
+                    if(nCurrentY+py < nFieldHeight -1)
+                    {
+                        bool bLine = true;
+                        for(int px = 1; px < nFieldWidth - 1; px++)
+                            bLine &= (pField[(nCurrentY + py) * nFieldWidth + px]) != 0;
+
+                        if(bLine)
+                        {
+                            // Mark the line for clearing, e.g. set to 8 or push to a vector
+                            for(int px = 1; px < nFieldWidth - 1; px++)
+                                pField[(nCurrentY + py) * nFieldWidth + px] = 8;
+                            // (You can add line-clearing logic here)
+                            vLines.push_back(nCurrentY+py);
+                        }
+                    }
+                
+                // Pick a new piece
+                nCurrentPiece = rand() % 7;
+                nCurrentRotation = 0;
+                nCurrentX = nFieldWidth / 2;
+                nCurrentY = 0;
+        
+                // If new piece doesn't fit, game over
+                bGameOver = !DoesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX, nCurrentY);
+            }
+            nSpeedCounter=0;
+        }
+
         // Render output =====
 
 
@@ -155,9 +208,34 @@ int main(){
                 if(tetromino[nCurrentPiece][Rotate(px, py, nCurrentRotation)] != L'.')
                     screen[(nCurrentY+py)*nScreenWidth+(nCurrentX+px)] = nCurrentPiece+65;
 
-        
-        // Display Frame
-        WriteConsoleOutputCharacterW(hConsole, screen, nScreenWidth*nScreenHeight, {0,0}, &dwBytesWritten);
+        // Display score
+        swprintf_s(&screen[2 * nScreenWidth + nFieldWidth + 6], 16, L"SCORE: %8d", nScore);
+
+        if (!vLines.empty())
+        {
+            // Display frame with completed lines highlighted
+            WriteConsoleOutputCharacterW(hConsole, screen, nScreenWidth * nScreenHeight, {0,0}, &dwBytesWritten);
+            std::this_thread::sleep_for(std::chrono::milliseconds(400)); // Pause to show the completed lines
+
+            // Remove the completed lines
+            for (auto &v : vLines)
+                for (int px = 1; px < nFieldWidth - 1; px++)
+                {
+                    for (int py = v; py > 0; py--)
+                        pField[py * nFieldWidth + px] = pField[(py - 1) * nFieldWidth + px];
+                    pField[px] = 0;
+                }
+
+            // Add score for cleared lines
+            nScore += (1 << vLines.size()) * 100;
+
+            vLines.clear();
+        }
+        else
+        {
+            // Display frame as usual
+            WriteConsoleOutputCharacterW(hConsole, screen, nScreenWidth * nScreenHeight, {0,0}, &dwBytesWritten);
+        }
 
     }
 
